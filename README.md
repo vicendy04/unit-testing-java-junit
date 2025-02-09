@@ -2,21 +2,19 @@
 
 [Initializing Tests with @Before Methods](https://www.educative.io/courses/unit-testing-java8-junit/initializing-tests-with-before-methods)
 
-> If both tests have the same logic, we can move that common logic into an `@Before` method. That way, each JUnit first executes code in any methods marked with the `@Before` annotation.
+If two tests have the same setup logic, we can move that common logic into a `@Before` method. This way, JUnit will run the code in any `@Before` methods before each test.
 
 ---
 [Hamcrest Assertions](https://www.educative.io/courses/unit-testing-java8-junit/hamcrest-assertions)
 
 ```java
-// Thay vì assertTrue(value > 0), ta dùng: 
+// Instead of assertTrue(value > 0), we use:
 assertThat(value, greaterThan(0));
 ```
 
-Dễ đọc, gần với ngôn ngữ tự nhiên
-
-Hỗ trợ nhiều matcher linh hoạt hơn
-
-alternatives: assertj
+- Easier to read, more natural language  
+- Supports more flexible matchers  
+- Alternative: AssertJ  
 
 ---
 [Testing the Expected Exceptions](https://www.educative.io/courses/unit-testing-java8-junit/testing-the-expected-exceptions)
@@ -25,7 +23,7 @@ alternatives: assertj
 @Test(expected = InsufficientFundsException.class)
 public void throwsWhenWithdrawingTooMuch() {
     Account account = new Account(100);
-    account.withdraw(200); // Số tiền rút lớn hơn số dư
+    account.withdraw(200);
 }
 
 void withdraw(int dollars) {
@@ -35,21 +33,23 @@ void withdraw(int dollars) {
 }
 ```
 
-[Assert an Exception Is Thrown in JUnit 4 and 5 | Baeldung](https://www.baeldung.com/junit-assert-exception) new api
+[Assert an Exception Is Thrown in JUnit 4 and 5 | Baeldung](https://www.baeldung.com/junit-assert-exception) (new API)
 
 ---
-**Sai lầm phổ biến**
+**Common Mistakes**  
 
-Một sai lầm thường gặp là tập trung kiểm thử từng phương thức một cách riêng lẻ, chẳng hạn như viết một bài kiểm thử chỉ để xác nhận `getBalance()`. Tuy nhiên, điều này không mang nhiều ý nghĩa vì phương thức này có thể chỉ đơn giản là trả về giá trị của một biến.
+When we write tests, focus on the behaviors of our class, not on testing the individual methods.
 
-**Hướng tiếp cận đúng**
+For example, writing a test just to check getBalance(). This does not add much value because the method may only return a variable.
 
-Thay vào đó, chúng ta nên kiểm thử các hành vi của lớp ATM, ví dụ như:
+**Better Approach**  
 
-- **Gửi tiền một lần** (`makeSingleDeposit`)
-- **Gửi tiền nhiều lần** (`makeMultipleDeposits`)
+Instead, we should test the behavior of the ATM class, such as:  
 
-Mỗi bài kiểm thử này sẽ sử dụng `getBalance()` để xác minh kết quả, nhưng chúng không tập trung vào kiểm thử bản thân `getBalance()`.
+- **Single deposit** (`makeSingleDeposit`)  
+- **Multiple deposits** (`makeMultipleDeposits`)  
+
+Each test will use `getBalance()` to verify the result, but they do not focus on testing `getBalance()` itself.
 
 ---
 ```java
@@ -58,7 +58,7 @@ public void matches() {
   Profile profile = new Profile("Bull Hockey, Inc.");
   Question question = new BooleanQuestion(1, "Got milk?");
 
-  // answers false when must-match criteria not met
+  // Answers false when must-match criteria is not met
   profile.add(new Answer(question, Bool.FALSE));
   Criteria criteria = new Criteria();
   criteria.add(
@@ -66,7 +66,7 @@ public void matches() {
 
   assertFalse(profile.matches(criteria));
 
-  // answers true for any don't care criteria 
+  // Answers true for any don't-care criteria  
   profile.add(new Answer(question, Bool.FALSE));
   criteria = new Criteria();
   criteria.add(
@@ -76,28 +76,28 @@ public void matches() {
 }
 ```
 
-Mặc dù cách tiếp cận này giúp giảm lặp lại mã (vì dùng chung setup dữ liệu), nhưng nó có **nhược điểm lớn**:
+Although this approach reduces code duplication (by sharing data setup), it has **major drawbacks**:  
 
-- Khi một `assertion` thất bại, các kiểm thử sau đó sẽ không được thực thi.
-- Khi test thất bại, ta không biết ngay nguyên nhân cụ thể, vì chỉ có một phương thức `matches()` bị lỗi.
-- Mất đi tính độc lập của từng kiểm thử, có thể dẫn đến việc lỗi lan truyền.
+- If one `assertion` fails, the following tests won’t run.  
+- If the test fails, it’s hard to know the exact reason because only `matches()` fails.  
+- Tests lose independence, which can cause failure to spread.  
 
 ```java
-// Test 1 (answers false when must-match criteria not met)
+// Test 1 (answers false when must-match criteria is not met)
 @Test
 
-// Test 2 (answers true for any don't care criteria)
+// Test 2 (answers true for any don't-care criteria)
 @Test
 ```
 
 ---
-**Naming techniques**
+**Naming**  
 
-**Hành động → Kết quả** (`doingSomeOperationGeneratesSomeResult`)
+**Action → Result** (`doingSomeOperationGeneratesSomeResult`)  
 
-- `withdrawingFundsReducesBalance()`
-- `depositingMoneyIncreasesBalance()`
-- `enteringInvalidPasswordTriggersError()`
+- `withdrawingFundsReducesBalance()`  
+- `depositingMoneyIncreasesBalance()`  
+- `enteringInvalidPasswordTriggersError()`  
 
 ---
 ```java
@@ -107,6 +107,11 @@ public void somethingWeCannotHandleRightNow() {
 // ...
 }
 ```
+
+---
+Use Mock Objects (like Mockito).  
+
+Remove try/catch blocks; declare exceptions in the test method instead.  
 
 # pragmatic-unit-testing-in-java-8-with-junit
   Sample codes of the book "Pragmatic Unit Testing in Java 8 with JUnit" (https://pragprog.com/book/utj2/pragmatic-unit-testing-in-java-8-with-junit)
